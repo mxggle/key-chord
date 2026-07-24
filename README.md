@@ -14,6 +14,8 @@
 
 Designed as a sleek, permission-free alternative to heavy application-switching macros (such as Keyboard Maestro setups), KeyChord utilizes native Carbon global hotkeys and AppKit window activation—delivering instant, low-latency app switching **without requiring Accessibility or Input Monitoring permissions**.
 
+<img width="1680" height="1264" alt="CleanShot 2026-07-24 at 23 11 19@2x" src="https://github.com/user-attachments/assets/36b047ef-e01c-43de-8211-b69e68526eb0" />
+
 ---
 
 ## 🎵 Design Philosophy
