@@ -8,9 +8,21 @@
 [![macOS](https://img.shields.io/badge/macOS-14.0%2B-apple.svg)](Package.swift)
 [![Swift](https://img.shields.io/badge/Swift-6.2-orange.svg)](Package.swift)
 
-**KeyChord** is a high-performance, lightweight native macOS menu-bar and menu-driven application designed to replace heavy application-switching macros (such as Keyboard Maestro app switcher setups). 
+> *Switching apps should feel like playing chords — different key chords open different apps.*
 
-It utilizes native Carbon global hotkeys and AppKit application activation—delivering instant, low-latency app switching **without requiring Accessibility or Input Monitoring permissions**.
+**KeyChord** is a high-performance, lightweight native macOS menu-bar app built around a simple design philosophy: **making app switching like playing chords on a keyboard**. Just as a musician plays different key chords to evoke different harmonies, KeyChord allows you to map unique key combinations ("chords") to instantly activate, toggle, or launch your target applications.
+
+Designed as a sleek, permission-free alternative to heavy application-switching macros (such as Keyboard Maestro setups), KeyChord utilizes native Carbon global hotkeys and AppKit window activation—delivering instant, low-latency app switching **without requiring Accessibility or Input Monitoring permissions**.
+
+---
+
+## 🎵 Design Philosophy
+
+KeyChord was born from a desire for seamless, muscle-memory-driven workflow navigation:
+
+- **🎹 Chords as Shortcuts**: Map distinct key combinations (chords) to your essential apps. Hitting a chord instantly switches focus to that app.
+- **🎶 Musical Fluidity**: Move between your code editor, terminal, browser, and notes with the natural rhythm of playing piano chords.
+- **⚡ Zero Friction**: Low-latency, lightweight execution with zero intrusive accessibility hooks or performance overhead.
 
 ---
 
