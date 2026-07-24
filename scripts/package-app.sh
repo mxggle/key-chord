@@ -3,10 +3,10 @@ set -euo pipefail
 
 SCRIPT_DIR="${0:A:h}"
 PROJECT_DIR="${SCRIPT_DIR:h}"
-PRODUCT_NAME="App Switcher"
+PRODUCT_NAME="KeyChord"
 BUILD_DIR="${PROJECT_DIR}/.build"
 APP_PATH="${BUILD_DIR}/${PRODUCT_NAME}.app"
-EXECUTABLE_PATH="${PROJECT_DIR}/.build/release/AppSwitcher"
+EXECUTABLE_PATH="${PROJECT_DIR}/.build/release/KeyChord"
 
 cd "${PROJECT_DIR}"
 swift build -c release
@@ -18,8 +18,12 @@ fi
 
 rm -rf "${APP_PATH}"
 mkdir -p "${APP_PATH}/Contents/MacOS"
-cp "${EXECUTABLE_PATH}" "${APP_PATH}/Contents/MacOS/AppSwitcher"
+mkdir -p "${APP_PATH}/Contents/Resources"
+cp "${EXECUTABLE_PATH}" "${APP_PATH}/Contents/MacOS/KeyChord"
 cp "${PROJECT_DIR}/packaging/Info.plist" "${APP_PATH}/Contents/Info.plist"
+if [[ -f "${PROJECT_DIR}/packaging/AppIcon.icns" ]]; then
+    cp "${PROJECT_DIR}/packaging/AppIcon.icns" "${APP_PATH}/Contents/Resources/AppIcon.icns"
+fi
 
 SIGNING_IDENTITY="${CODE_SIGN_IDENTITY:-}"
 if [[ -z "${SIGNING_IDENTITY}" ]]; then

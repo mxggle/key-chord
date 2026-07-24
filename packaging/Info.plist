@@ -3,15 +3,19 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleDisplayName</key>
-    <string>App Switcher</string>
+    <string>KeyChord</string>
     <key>CFBundleExecutable</key>
-    <string>AppSwitcher</string>
+    <string>KeyChord</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
+    <key>CFBundleIconName</key>
+    <string>AppIcon</string>
     <key>CFBundleIdentifier</key>
-    <string>com.harry.appswitcher</string>
+    <string>com.harry.keychord</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>App Switcher</string>
+    <string>KeyChord</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>

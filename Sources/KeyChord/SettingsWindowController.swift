@@ -10,7 +10,7 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
         let rootView = SettingsView(viewModel: viewModel)
         let hostingController = NSHostingController(rootView: rootView)
         let window = NSWindow(contentViewController: hostingController)
-        window.title = "App Switcher"
+        window.title = "KeyChord"
         window.setContentSize(NSSize(width: 920, height: 650))
         window.minSize = NSSize(width: 840, height: 580)
         window.styleMask = [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView]
@@ -20,7 +20,7 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
         window.tabbingMode = .disallowed
         window.isReleasedWhenClosed = false
         window.center()
-        window.setFrameAutosaveName("AppSwitcherSettingsWindow")
+        window.setFrameAutosaveName("KeyChordSettingsWindow")
         super.init(window: window)
         window.delegate = self
     }

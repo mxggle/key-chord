@@ -16,7 +16,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             configurationStore = try ConfigurationStore()
         } catch {
             let fallbackURL = FileManager.default.temporaryDirectory
-                .appendingPathComponent("AppSwitcher-config.json")
+                .appendingPathComponent("KeyChord-config.json")
             configurationStore = ConfigurationStore(fileURL: fallbackURL)
             loadError = error
         }
@@ -67,26 +67,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func configureStatusItem() {
-        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        // Use an explicit identity so menu-bar managers and WindowServer do not
-        // reuse stale placement state from the original anonymous Item-0.
-        item.autosaveName = "AppSwitcherPrimaryStatusItemV2"
+        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         guard let button = item.button else {
             statusItem = item
             return
         }
 
-        // A labeled item is unambiguous next to Control Center and the many
-        // graph/grid glyphs used by menu-bar utilities. It also avoids a blank
-        // item if an SF Symbol is unavailable or fails to render.
-        button.title = "App Switcher"
-        button.image = nil
-        button.imagePosition = .noImage
-        button.font = .systemFont(ofSize: NSFont.systemFontSize, weight: .semibold)
-        button.setAccessibilityLabel("App Switcher")
-        button.toolTip = "App Switcher"
+        let symbolConfig = NSImage.SymbolConfiguration(pointSize: 15, weight: .semibold)
+        let icon = (
+            NSImage(systemSymbolName: "arrow.2.squarepath", accessibilityDescription: "KeyChord")
+            ?? NSImage(systemSymbolName: "switch.2", accessibilityDescription: "KeyChord")
+            ?? NSImage(systemSymbolName: "arrow.triangle.2.circlepath", accessibilityDescription: "KeyChord")
+        )?.withSymbolConfiguration(symbolConfig)
+
+        icon?.isTemplate = true
+        button.image = icon
+        button.imagePosition = .imageOnly
+        button.title = ""
+        button.setAccessibilityLabel("KeyChord")
+        button.toolTip = "KeyChord"
         statusItem = item
-        item.isVisible = true
+        applyStatusItemVisibility(configuration?.settings.showMenuBarIcon ?? true)
         rebuildMenu()
     }
 
@@ -114,7 +115,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func rebuildMenu() {
         let menu = NSMenu()
 
-        let heading = NSMenuItem(title: "App Switcher", action: nil, keyEquivalent: "")
+        let heading = NSMenuItem(title: "KeyChord", action: nil, keyEquivalent: "")
         heading.isEnabled = false
         menu.addItem(heading)
 
@@ -211,7 +212,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         menu.addItem(.separator())
         let quitItem = NSMenuItem(
-            title: "Quit App Switcher",
+            title: "Quit KeyChord",
             action: #selector(quitApplication),
             keyEquivalent: "q"
         )
@@ -257,6 +258,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             registrations = hotKeyManager.register(loadedConfiguration.shortcuts)
             loadError = nil
             applyDockVisibility(loadedConfiguration.settings.showDockIcon)
+            applyStatusItemVisibility(loadedConfiguration.settings.showMenuBarIcon)
             settingsWindowController?.viewModel.replacePersistedConfiguration(
                 loadedConfiguration
             )
@@ -266,6 +268,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             registrations = []
             loadError = error
             applyDockVisibility(true)
+            applyStatusItemVisibility(true)
         }
         publishRegistrationIssues()
         rebuildMenu()
@@ -303,6 +306,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         registrations = hotKeyManager.register(updatedConfiguration.shortcuts)
         loadError = nil
         applyDockVisibility(updatedConfiguration.settings.showDockIcon)
+        applyStatusItemVisibility(updatedConfiguration.settings.showMenuBarIcon)
         publishRegistrationIssues()
         rebuildMenu()
     }
@@ -311,6 +315,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let policy: NSApplication.ActivationPolicy = showDockIcon ? .regular : .accessory
         guard NSApp.activationPolicy() != policy else { return }
         NSApp.setActivationPolicy(policy)
+    }
+
+    private func applyStatusItemVisibility(_ showMenuBarIcon: Bool) {
+        statusItem?.isVisible = showMenuBarIcon
     }
 
     @objc private func openConfiguration() {

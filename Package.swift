@@ -3,17 +3,17 @@
 import PackageDescription
 
 let package = Package(
-    name: "AppSwitcher",
+    name: "KeyChord",
     platforms: [
         .macOS(.v14)
     ],
     products: [
-        .executable(name: "AppSwitcher", targets: ["AppSwitcher"])
+        .executable(name: "KeyChord", targets: ["KeyChord"])
     ],
     targets: [
         .executableTarget(
-            name: "AppSwitcher",
-            path: "Sources/AppSwitcher"
+            name: "KeyChord",
+            path: "Sources/KeyChord"
         )
     ]
 )

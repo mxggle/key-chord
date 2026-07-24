@@ -71,6 +71,7 @@ enum SelfTest {
                 from: Data(legacyJSON.utf8)
             )
             if decoded.settings != .defaults
+                || decoded.settings.showMenuBarIcon != true
                 || decoded.shortcuts.first?.hideWhenFrontmost != true
                 || decoded.shortcuts.first?.activateAllWindows != true {
                 throw SelfTestError.failedExpectation

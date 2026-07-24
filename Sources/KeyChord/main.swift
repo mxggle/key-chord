@@ -60,7 +60,7 @@ private func runCommandLineMode(arguments: [String]) -> Int32? {
 
     case "--validate-config":
         guard arguments.count == 3 else {
-            FileHandle.standardError.write(Data("Usage: AppSwitcher --validate-config PATH\n".utf8))
+            FileHandle.standardError.write(Data("Usage: KeyChord --validate-config PATH\n".utf8))
             return 2
         }
         do {

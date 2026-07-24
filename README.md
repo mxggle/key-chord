@@ -1,10 +1,14 @@
-# App Switcher
+<p align="center">
+  <img src="packaging/AppIcon.png" width="128" height="128" alt="KeyChord Logo" />
+</p>
+
+# KeyChord
 
 [![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](packaging/Info.plist)
 [![macOS](https://img.shields.io/badge/macOS-14.0%2B-apple.svg)](Package.swift)
 [![Swift](https://img.shields.io/badge/Swift-6.2-orange.svg)](Package.swift)
 
-**App Switcher** is a high-performance, lightweight native macOS menu-bar and menu-driven application designed to replace heavy application-switching macros (such as Keyboard Maestro app switcher setups). 
+**KeyChord** is a high-performance, lightweight native macOS menu-bar and menu-driven application designed to replace heavy application-switching macros (such as Keyboard Maestro app switcher setups). 
 
 It utilizes native Carbon global hotkeys and AppKit application activation—delivering instant, low-latency app switching **without requiring Accessibility or Input Monitoring permissions**.
 
@@ -40,10 +44,10 @@ To run self-tests and start the application in development mode:
 
 ```bash
 # Run internal self-tests
-swift run AppSwitcher --self-test
+swift run KeyChord --self-test
 
-# Launch App Switcher directly
-swift run AppSwitcher
+# Launch KeyChord directly
+swift run KeyChord
 ```
 
 ### 2. Package as a Native macOS Application
@@ -56,7 +60,7 @@ Use the provided packaging script to compile the release binary and assemble a s
 
 The compiled application bundle will be created at:
 ```text
-.build/App Switcher.app
+.build/KeyChord.app
 ```
 
 > **Note on Code Signing**: The build script automatically signs the bundle using the first available local code-signing identity, falling back to ad-hoc signing (`-`) if none exists.
@@ -65,10 +69,10 @@ The compiled application bundle will be created at:
 
 ## ⚙️ Configuration
 
-On initial execution, App Switcher creates a default configuration file at:
+On initial execution, KeyChord creates a default configuration file at:
 
 ```text
-~/Library/Application Support/AppSwitcher/config.json
+~/Library/Application Support/KeyChord/config.json
 ```
 
 ### Configuration Schema
@@ -120,7 +124,7 @@ On initial execution, App Switcher creates a default configuration file at:
 
 ## 💻 Command-Line Options (CLI)
 
-App Switcher includes utility flags for automation, diagnostics, and testing:
+KeyChord includes utility flags for automation, diagnostics, and testing:
 
 | Flag | Description |
 | :--- | :--- |
@@ -135,14 +139,14 @@ App Switcher includes utility flags for automation, diagnostics, and testing:
 
 ```bash
 # Check version
-AppSwitcher --version
-# Output: App Switcher v1.1.0 (build 2)
+KeyChord --version
+# Output: KeyChord v1.1.0 (build 2)
 
 # Test shortcut registration for system conflicts
-AppSwitcher --probe-hotkeys
+KeyChord --probe-hotkeys
 
 # Validate custom configuration file
-AppSwitcher --validate-config ~/Desktop/my_config.json
+KeyChord --validate-config ~/Desktop/my_config.json
 ```
 
 ---
@@ -150,20 +154,20 @@ AppSwitcher --validate-config ~/Desktop/my_config.json
 ## 🔄 Migrating from Keyboard Maestro
 
 If migrating from Keyboard Maestro:
-1. **Parallel Execution**: Both Keyboard Maestro and App Switcher can temporarily receive the same hotkey, which may cause activation races.
-2. **Conflict Warnings**: App Switcher displays a migration banner in the status menu when Keyboard Maestro Engine is detected running.
-3. **Completing Migration**: Disable your Keyboard Maestro `App switcher` macro group or quit the Keyboard Maestro Engine once App Switcher is tested and configured.
+1. **Parallel Execution**: Both Keyboard Maestro and KeyChord can temporarily receive the same hotkey, which may cause activation races.
+2. **Conflict Warnings**: KeyChord displays a migration banner in the status menu when Keyboard Maestro Engine is detected running.
+3. **Completing Migration**: Disable your Keyboard Maestro `App switcher` macro group or quit the Keyboard Maestro Engine once KeyChord is tested and configured.
 
 ---
 
 ## 📁 Repository Structure
 
 ```text
-app-switcher/
+key-chord/
 ├── Package.swift               # Swift Package Manager manifest
 ├── README.md                   # Project documentation
 ├── Sources/
-│   └── AppSwitcher/
+│   └── KeyChord/
 │       ├── AppDelegate.swift   # App lifecycle, menu item & Dock management
 │       ├── ApplicationSwitcher.swift # Window activation & hide engine
 │       ├── ConfigurationStore.swift  # Config storage & JSON persistence
@@ -176,6 +180,8 @@ app-switcher/
 │       ├── ShortcutRecorder.swift # Key recorder control
 │       └── main.swift          # Entry point & CLI argument parser
 ├── packaging/
+│   ├── AppIcon.png             # Application logo image
+│   ├── AppIcon.icns            # macOS ICNS icon bundle
 │   └── Info.plist              # macOS App bundle property list
 └── scripts/
     └── package-app.sh          # Build & code-signing script
@@ -188,7 +194,7 @@ app-switcher/
 To run internal self-tests for hotkey handling, shortcut key code resolution, application state toggling, and configuration validation:
 
 ```bash
-swift run AppSwitcher --self-test
+swift run KeyChord --self-test
 ```
 
 ---

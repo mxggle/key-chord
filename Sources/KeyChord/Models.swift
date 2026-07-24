@@ -2,7 +2,7 @@ import Carbon
 import Foundation
 
 enum AppInfo {
-    static let name = "App Switcher"
+    static let name = "KeyChord"
     static let version = "1.1.0"
     static let buildNumber = "2"
 }
@@ -109,27 +109,32 @@ struct ShortcutDefinition: Codable, Equatable, Identifiable, Sendable {
 
 struct GeneralSettings: Codable, Equatable, Sendable {
     var showDockIcon: Bool
+    var showMenuBarIcon: Bool
     var showShortcutsInMenu: Bool
     var showKeyboardMaestroWarning: Bool
 
     static let defaults = GeneralSettings(
         showDockIcon: true,
+        showMenuBarIcon: true,
         showShortcutsInMenu: true,
         showKeyboardMaestroWarning: true
     )
 
     private enum CodingKeys: String, CodingKey {
         case showDockIcon
+        case showMenuBarIcon
         case showShortcutsInMenu
         case showKeyboardMaestroWarning
     }
 
     init(
         showDockIcon: Bool,
+        showMenuBarIcon: Bool = true,
         showShortcutsInMenu: Bool,
         showKeyboardMaestroWarning: Bool
     ) {
         self.showDockIcon = showDockIcon
+        self.showMenuBarIcon = showMenuBarIcon
         self.showShortcutsInMenu = showShortcutsInMenu
         self.showKeyboardMaestroWarning = showKeyboardMaestroWarning
     }
@@ -139,6 +144,10 @@ struct GeneralSettings: Codable, Equatable, Sendable {
         showDockIcon = try container.decodeIfPresent(
             Bool.self,
             forKey: .showDockIcon
+        ) ?? true
+        showMenuBarIcon = try container.decodeIfPresent(
+            Bool.self,
+            forKey: .showMenuBarIcon
         ) ?? true
         showShortcutsInMenu = try container.decodeIfPresent(
             Bool.self,

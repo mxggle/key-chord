@@ -11,7 +11,7 @@ struct ConfigurationStore {
             throw CocoaError(.fileNoSuchFile)
         }
         fileURL = supportDirectory
-            .appendingPathComponent("AppSwitcher", isDirectory: true)
+            .appendingPathComponent("KeyChord", isDirectory: true)
             .appendingPathComponent("config.json", isDirectory: false)
     }
 
@@ -74,21 +74,21 @@ struct ConfigurationStore {
     static let defaultConfiguration = SwitcherConfiguration(
         version: 1,
         shortcuts: [
-            .init(id: "bridgespace", name: "BridgeSpace", bundleIdentifier: "io.bridgemind.bridgespace", key: "2", modifiers: [.option, .shift], enabled: true, launchIfNeeded: false),
-            .init(id: "chatgpt", name: "ChatGPT", bundleIdentifier: "com.openai.chat", key: "q", modifiers: [.option], enabled: true, launchIfNeeded: false),
+            .init(id: "activity-monitor", name: "Activity Monitor", bundleIdentifier: "com.apple.ActivityMonitor", key: "l", modifiers: [.option], enabled: true, launchIfNeeded: true),
+            .init(id: "antigravity", name: "Antigravity", bundleIdentifier: "com.google.antigravity", key: "c", modifiers: [.option, .shift], enabled: true, launchIfNeeded: true),
+            .init(id: "chatgpt", name: "ChatGPT", bundleIdentifier: "com.openai.chat", key: "q", modifiers: [.option], enabled: true, launchIfNeeded: true),
             .init(id: "chrome", name: "Chrome", bundleIdentifier: "com.google.Chrome", key: "a", modifiers: [.option], enabled: true, launchIfNeeded: true),
-            .init(id: "claude", name: "Claude Code", bundleIdentifier: "com.anthropic.claudefordesktop", key: "x", modifiers: [.option], enabled: true, launchIfNeeded: false),
-            .init(id: "codex", name: "Codex", bundleIdentifier: "com.openai.codex", key: "c", modifiers: [.option], enabled: true, launchIfNeeded: false),
-            .init(id: "cursor", name: "Cursor", bundleIdentifier: "com.todesktop.230313mzl4w4u92", key: "w", modifiers: [.option], enabled: true, launchIfNeeded: false),
-            .init(id: "dash", name: "Dash", bundleIdentifier: "com.kapeli.dashdoc", key: "d", modifiers: [.option, .shift], enabled: true, launchIfNeeded: false),
-            .init(id: "datagrip", name: "DataGrip", bundleIdentifier: "com.jetbrains.datagrip", key: "d", modifiers: [.option], enabled: true, launchIfNeeded: false),
+            .init(id: "claude", name: "Claude Code", bundleIdentifier: "com.anthropic.claudefordesktop", key: "x", modifiers: [.option], enabled: true, launchIfNeeded: true),
+            .init(id: "codex", name: "Codex", bundleIdentifier: "com.openai.codex", key: "c", modifiers: [.option], enabled: true, launchIfNeeded: true),
             .init(id: "finder", name: "Finder", bundleIdentifier: "com.apple.finder", key: "1", modifiers: [.option], enabled: true, launchIfNeeded: true),
-            .init(id: "hermes", name: "Hermes", bundleIdentifier: "com.nousresearch.hermes", key: "r", modifiers: [.option], enabled: true, launchIfNeeded: false),
-            .init(id: "notion", name: "Notion", bundleIdentifier: "notion.id", key: "e", modifiers: [.option, .shift], enabled: true, launchIfNeeded: false),
-            .init(id: "obsidian", name: "Obsidian", bundleIdentifier: "md.obsidian", key: "e", modifiers: [.option], enabled: true, launchIfNeeded: false),
-            .init(id: "telegram", name: "Telegram", bundleIdentifier: "ru.keepcoder.Telegram", key: "3", modifiers: [.option], enabled: true, launchIfNeeded: false),
-            .init(id: "vscode", name: "VS Code", bundleIdentifier: "com.microsoft.VSCode", key: "z", modifiers: [.option], enabled: true, launchIfNeeded: false),
-            .init(id: "warp", name: "Warp", bundleIdentifier: "dev.warp.Warp-Stable", key: "2", modifiers: [.option], enabled: true, launchIfNeeded: false)
+            .init(id: "hermes", name: "Hermes", bundleIdentifier: "com.nousresearch.hermes", key: "r", modifiers: [.option], enabled: true, launchIfNeeded: true),
+            .init(id: "line", name: "LINE", bundleIdentifier: "jp.naver.line.mac", key: "q", modifiers: [.option, .shift], enabled: true, launchIfNeeded: true),
+            .init(id: "notion", name: "Notion", bundleIdentifier: "notion.id", key: "e", modifiers: [.option, .shift], enabled: true, launchIfNeeded: true),
+            .init(id: "obsidian", name: "Obsidian", bundleIdentifier: "md.obsidian", key: "e", modifiers: [.option], enabled: true, launchIfNeeded: true),
+            .init(id: "telegram", name: "Telegram", bundleIdentifier: "ru.keepcoder.Telegram", key: "3", modifiers: [.option], enabled: true, launchIfNeeded: true),
+            .init(id: "vscode", name: "VS Code", bundleIdentifier: "com.microsoft.VSCode", key: "z", modifiers: [.option], enabled: true, launchIfNeeded: true),
+            .init(id: "warp", name: "Warp", bundleIdentifier: "dev.warp.Warp-Stable", key: "2", modifiers: [.option], enabled: true, launchIfNeeded: true),
+            .init(id: "wechat", name: "WeChat", bundleIdentifier: "com.tencent.xinWeChat", key: "w", modifiers: [.option, .shift], enabled: true, launchIfNeeded: true)
         ]
     )
 }

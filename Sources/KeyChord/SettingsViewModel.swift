@@ -164,7 +164,7 @@ final class SettingsViewModel: ObservableObject {
             launchAtLoginEnabled = SMAppService.mainApp.status == .enabled
             setFeedback(
                 launchAtLoginEnabled
-                    ? "App Switcher will launch when you log in."
+                    ? "KeyChord will launch when you log in."
                     : "Launch at login is off."
             )
         } catch {

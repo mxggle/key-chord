@@ -4,6 +4,7 @@ import SwiftUI
 struct SettingsView: View {
     @ObservedObject var viewModel: SettingsViewModel
     @State private var showResetConfirmation = false
+    @State private var columnVisibility: NavigationSplitViewVisibility = .all
 
     private let contentMaxWidth: CGFloat = 720
     private var containerShape: RoundedRectangle {
@@ -11,7 +12,7 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        NavigationSplitView {
+        NavigationSplitView(columnVisibility: $columnVisibility) {
             sidebar
         } detail: {
             detail
@@ -19,6 +20,15 @@ struct SettingsView: View {
         .navigationSplitViewStyle(.balanced)
         .frame(minWidth: 840, minHeight: 580)
         .background(Color(nsColor: .windowBackgroundColor))
+        .toolbar {
+            ToolbarItem(placement: .navigation) {
+                Button(action: toggleSidebar) {
+                    Label("Toggle Sidebar", systemImage: "sidebar.leading")
+                }
+                .keyboardShortcut("s", modifiers: [.option, .command])
+                .help("Toggle Sidebar (⌥⌘S)")
+            }
+        }
         .alert("Restore default settings?", isPresented: $showResetConfirmation) {
             Button("Cancel", role: .cancel) {}
             Button("Restore Defaults", role: .destructive) {
@@ -26,6 +36,12 @@ struct SettingsView: View {
             }
         } message: {
             Text("Your current shortcut list will be replaced after you save.")
+        }
+    }
+
+    private func toggleSidebar() {
+        withAnimation(.easeInOut(duration: 0.2)) {
+            columnVisibility = columnVisibility == .all ? .detailOnly : .all
         }
     }
 
@@ -46,7 +62,7 @@ struct SettingsView: View {
         }
         .listStyle(.sidebar)
         .navigationSplitViewColumnWidth(min: 190, ideal: 210, max: 260)
-        .navigationTitle("App Switcher")
+        .navigationTitle("KeyChord")
         .safeAreaInset(edge: .bottom) {
             VStack(alignment: .leading, spacing: 5) {
                 Divider()
@@ -202,7 +218,7 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 24) {
                 pageHeader(
                     title: "General",
-                    subtitle: "Choose how App Switcher starts and what appears in its menu."
+                    subtitle: "Choose how KeyChord starts and what appears in its menu."
                 )
 
                 settingsGroup("Startup") {
@@ -227,6 +243,14 @@ struct SettingsView: View {
                 }
 
                 settingsGroup("Menu Bar") {
+                    SettingsToggleRow(
+                        title: "Show icon in menu bar",
+                        subtitle: "Display the KeyChord icon in the macOS menu bar.",
+                        symbol: "menubar.arrow.up.rectangle",
+                        color: .green,
+                        isOn: $viewModel.configuration.settings.showMenuBarIcon
+                    )
+                    Divider().padding(.leading, 54)
                     SettingsToggleRow(
                         title: "Show shortcut list",
                         subtitle: "Display every active app shortcut in the menu-bar menu.",
@@ -286,7 +310,7 @@ struct SettingsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 pageHeader(
-                    title: "About App Switcher",
+                    title: "About KeyChord",
                     subtitle: "A focused, native replacement for application-switching macros."
                 )
 
@@ -296,7 +320,7 @@ struct SettingsView: View {
                         .shadow(color: .indigo.opacity(0.25), radius: 14, y: 7)
 
                     VStack(alignment: .leading, spacing: 5) {
-                        Text("App Switcher")
+                        Text("KeyChord")
                             .font(.system(size: 24, weight: .bold))
                         Text("Version \(appVersion)")
                             .font(.callout)

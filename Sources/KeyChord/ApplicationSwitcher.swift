@@ -34,7 +34,7 @@ final class SystemWorkspace: WorkspaceControlling {
         guard let applicationURL = workspace.urlForApplication(
             withBundleIdentifier: bundleIdentifier
         ) else {
-            NSLog("AppSwitcher could not find an application for %@", bundleIdentifier)
+            NSLog("KeyChord could not find an application for %@", bundleIdentifier)
             return
         }
 
@@ -43,7 +43,7 @@ final class SystemWorkspace: WorkspaceControlling {
         configuration.addsToRecentItems = false
         workspace.openApplication(at: applicationURL, configuration: configuration) { _, error in
             if let error {
-                NSLog("AppSwitcher could not launch %@: %@", bundleIdentifier, error.localizedDescription)
+                NSLog("KeyChord could not launch %@: %@", bundleIdentifier, error.localizedDescription)
             }
         }
     }
@@ -57,11 +57,13 @@ final class ApplicationSwitcher {
     }
 
     func perform(_ shortcut: ShortcutDefinition) {
+        NSLog("KeyChord performing shortcut: %@ (%@)", shortcut.name, shortcut.bundleIdentifier)
         if let application = workspace.runningApplications(
             bundleIdentifier: shortcut.bundleIdentifier
         ).first {
             if application.isActive {
                 if shortcut.hideWhenFrontmost {
+                    NSLog("KeyChord hiding frontmost app: %@", shortcut.name)
                     _ = application.hide()
                 }
                 return
@@ -76,9 +78,10 @@ final class ApplicationSwitcher {
             } else {
                 didActivate = application.activateFrontWindow()
             }
+            NSLog("KeyChord direct activation result for %@: %d", shortcut.name, didActivate ? 1 : 0)
             if !didActivate {
                 NSLog(
-                    "AppSwitcher activation was refused for %@; retrying through NSWorkspace",
+                    "KeyChord activation was refused for %@; retrying through NSWorkspace",
                     shortcut.bundleIdentifier
                 )
                 workspace.openApplication(bundleIdentifier: shortcut.bundleIdentifier)
@@ -87,7 +90,10 @@ final class ApplicationSwitcher {
         }
 
         if shortcut.launchIfNeeded {
+            NSLog("KeyChord launching stopped app: %@ (%@)", shortcut.name, shortcut.bundleIdentifier)
             workspace.openApplication(bundleIdentifier: shortcut.bundleIdentifier)
+        } else {
+            NSLog("KeyChord app %@ is not running and launchIfNeeded is false", shortcut.name)
         }
     }
 }

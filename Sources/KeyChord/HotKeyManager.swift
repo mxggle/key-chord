@@ -19,7 +19,7 @@ private func carbonHotKeyHandler(
 }
 
 final class HotKeyManager {
-    private static let signature: OSType = 0x4150_5357 // "APSW"
+    private static let signature: OSType = 0x4B43_4844 // "KCHD"
 
     private let switcher: ApplicationSwitcher
     private var eventHandler: EventHandlerRef?
@@ -48,7 +48,7 @@ final class HotKeyManager {
             &eventHandler
         )
         if status != noErr {
-            NSLog("AppSwitcher could not install its hot-key handler: %d", status)
+            NSLog("KeyChord could not install its hot-key handler: %d", status)
         }
     }
 
