@@ -35,4 +35,21 @@ fi
 
 codesign --force --options runtime --sign "${SIGNING_IDENTITY}" "${APP_PATH}"
 codesign --verify --deep --strict --verbose=2 "${APP_PATH}"
-print "${APP_PATH}"
+print "App bundle created: ${APP_PATH}"
+
+# Generate ZIP archive
+ZIP_PATH="${BUILD_DIR}/${PRODUCT_NAME}.zip"
+ditto -c -k --sequesterRsrc --keepParent "${APP_PATH}" "${ZIP_PATH}"
+print "ZIP archive created: ${ZIP_PATH}"
+
+# Generate DMG installer
+DMG_ROOT="${BUILD_DIR}/dmg_root"
+DMG_PATH="${BUILD_DIR}/${PRODUCT_NAME}.dmg"
+rm -rf "${DMG_ROOT}" "${DMG_PATH}"
+mkdir -p "${DMG_ROOT}"
+cp -R "${APP_PATH}" "${DMG_ROOT}/"
+ln -s /Applications "${DMG_ROOT}/Applications"
+hdiutil create -volname "${PRODUCT_NAME}" -srcfolder "${DMG_ROOT}" -ov -format UDZO "${DMG_PATH}" >/dev/null
+rm -rf "${DMG_ROOT}"
+print "DMG image created: ${DMG_PATH}"
+
