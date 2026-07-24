@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="packaging/AppIcon.png" width="128" height="128" alt="KeyChord Logo" />
+  <img src="packaging/AppIcon.png?v=2" width="128" height="128" alt="KeyChord Logo" />
 </p>
 
 # KeyChord
