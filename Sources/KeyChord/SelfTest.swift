@@ -1,6 +1,7 @@
 import Foundation
 
 enum SelfTest {
+    @MainActor
     static func run() -> [String] {
         var failures: [String] = []
 
@@ -62,6 +63,74 @@ enum SelfTest {
                 shortcuts: [makeShortcut(id: "one"), makeShortcut(id: "two")]
             )
             try ConfigurationValidator.validate(configuration)
+        }
+
+        let conflictSource = makeShortcut(id: "source", modifiers: [.option, .shift])
+        let conflictTarget = ShortcutDefinition(
+            id: "target-two",
+            name: "Target Two",
+            bundleIdentifier: "com.example.target-two",
+            key: "",
+            modifiers: [],
+            enabled: false,
+            launchIfNeeded: false
+        )
+        let conflictConfiguration = SwitcherConfiguration(
+            version: 1,
+            shortcuts: [conflictSource, conflictTarget]
+        )
+        check(
+            conflictConfiguration.shortcutUsing(
+                key: "A",
+                modifiers: [.shift, .option],
+                excludingID: conflictTarget.id
+            )?.id == conflictSource.id,
+            "shortcut conflicts identify the owning application regardless of key case or modifier order",
+            failures: &failures
+        )
+        check(
+            conflictConfiguration.shortcutUsing(
+                key: "a",
+                modifiers: [.option, .shift],
+                excludingID: conflictSource.id
+            ) == nil,
+            "shortcut conflict lookup excludes the edited application",
+            failures: &failures
+        )
+
+        let conflictViewModel = SettingsViewModel(
+            configuration: conflictConfiguration,
+            store: ConfigurationStore(
+                fileURL: FileManager.default.temporaryDirectory
+                    .appendingPathComponent("keychord-conflict-self-test.json")
+            ),
+            onApply: { _ in }
+        )
+        if let conflict = conflictViewModel.assignShortcut(
+            to: conflictTarget.id,
+            key: "a",
+            modifiers: [.option, .shift]
+        ) {
+            conflictViewModel.moveShortcut(conflict)
+            let movedSource = conflictViewModel.configuration.shortcuts.first {
+                $0.id == conflictSource.id
+            }
+            let movedTarget = conflictViewModel.configuration.shortcuts.first {
+                $0.id == conflictTarget.id
+            }
+            check(
+                movedSource?.key.isEmpty == true && movedSource?.enabled == false,
+                "moving a shortcut clears and disables its previous owner",
+                failures: &failures
+            )
+            check(
+                movedTarget?.usesHotKey(key: "a", modifiers: [.option, .shift]) == true
+                    && movedTarget?.enabled == true,
+                "moving a shortcut assigns and enables its new owner",
+                failures: &failures
+            )
+        } else {
+            failures.append("moving a shortcut reports its current owner")
         }
 
         expect("legacy configuration gains modern defaults", failures: &failures) {

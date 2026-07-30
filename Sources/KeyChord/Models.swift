@@ -3,8 +3,8 @@ import Foundation
 
 enum AppInfo {
     static let name = "KeyChord"
-    static let version = "1.1.0"
-    static let buildNumber = "2"
+    static let version = "1.1.1"
+    static let buildNumber = "3"
 }
 
 enum ShortcutModifier: String, Codable, CaseIterable, Sendable {
@@ -105,38 +105,42 @@ struct ShortcutDefinition: Codable, Equatable, Identifiable, Sendable {
         let symbols = order.filter(modifiers.contains).map(\.symbol).joined()
         return symbols + key.uppercased()
     }
+
+    func usesHotKey(
+        key candidateKey: String,
+        modifiers candidateModifiers: [ShortcutModifier]
+    ) -> Bool {
+        !key.isEmpty
+            && key.caseInsensitiveCompare(candidateKey) == .orderedSame
+            && carbonModifiers == candidateModifiers.reduce(0) { $0 | $1.carbonMask }
+    }
 }
 
 struct GeneralSettings: Codable, Equatable, Sendable {
     var showDockIcon: Bool
     var showMenuBarIcon: Bool
     var showShortcutsInMenu: Bool
-    var showKeyboardMaestroWarning: Bool
 
     static let defaults = GeneralSettings(
         showDockIcon: true,
         showMenuBarIcon: true,
-        showShortcutsInMenu: true,
-        showKeyboardMaestroWarning: true
+        showShortcutsInMenu: true
     )
 
     private enum CodingKeys: String, CodingKey {
         case showDockIcon
         case showMenuBarIcon
         case showShortcutsInMenu
-        case showKeyboardMaestroWarning
     }
 
     init(
         showDockIcon: Bool,
         showMenuBarIcon: Bool = true,
-        showShortcutsInMenu: Bool,
-        showKeyboardMaestroWarning: Bool
+        showShortcutsInMenu: Bool
     ) {
         self.showDockIcon = showDockIcon
         self.showMenuBarIcon = showMenuBarIcon
         self.showShortcutsInMenu = showShortcutsInMenu
-        self.showKeyboardMaestroWarning = showKeyboardMaestroWarning
     }
 
     init(from decoder: Decoder) throws {
@@ -152,10 +156,6 @@ struct GeneralSettings: Codable, Equatable, Sendable {
         showShortcutsInMenu = try container.decodeIfPresent(
             Bool.self,
             forKey: .showShortcutsInMenu
-        ) ?? true
-        showKeyboardMaestroWarning = try container.decodeIfPresent(
-            Bool.self,
-            forKey: .showKeyboardMaestroWarning
         ) ?? true
     }
 }
@@ -189,6 +189,16 @@ struct SwitcherConfiguration: Codable, Equatable, Sendable {
             GeneralSettings.self,
             forKey: .settings
         ) ?? .defaults
+    }
+
+    func shortcutUsing(
+        key: String,
+        modifiers: [ShortcutModifier],
+        excludingID: String
+    ) -> ShortcutDefinition? {
+        shortcuts.first {
+            $0.id != excludingID && $0.usesHotKey(key: key, modifiers: modifiers)
+        }
     }
 }
 

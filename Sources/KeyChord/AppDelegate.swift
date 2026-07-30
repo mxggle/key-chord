@@ -137,8 +137,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             status.isEnabled = false
             menu.addItem(status)
 
-            if configuration?.settings.showKeyboardMaestroWarning ?? true,
-               !NSRunningApplication.runningApplications(
+            if !NSRunningApplication.runningApplications(
                 withBundleIdentifier: "com.stairways.keyboardmaestro.engine"
             ).isEmpty {
                 let warning = NSMenuItem(

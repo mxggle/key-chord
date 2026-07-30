@@ -4,12 +4,17 @@ import SwiftUI
 struct ShortcutRecorder: NSViewRepresentable {
     @Binding var key: String
     @Binding var modifiers: [ShortcutModifier]
+    var onShortcutChange: ((String, [ShortcutModifier]) -> Void)?
 
     func makeNSView(context: Context) -> ShortcutRecorderControl {
         let control = ShortcutRecorderControl()
         control.onShortcutChange = { newKey, newModifiers in
-            key = newKey
-            modifiers = newModifiers
+            if let onShortcutChange {
+                onShortcutChange(newKey, newModifiers)
+            } else {
+                key = newKey
+                modifiers = newModifiers
+            }
         }
         control.key = key
         control.modifiers = modifiers

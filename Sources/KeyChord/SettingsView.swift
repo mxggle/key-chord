@@ -4,6 +4,7 @@ import SwiftUI
 struct SettingsView: View {
     @ObservedObject var viewModel: SettingsViewModel
     @State private var showResetConfirmation = false
+    @State private var shortcutConflict: SettingsViewModel.ShortcutConflict?
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
 
     private let contentMaxWidth: CGFloat = 720
@@ -36,6 +37,25 @@ struct SettingsView: View {
             }
         } message: {
             Text("Your current shortcut list will be replaced after you save.")
+        }
+        .alert(
+            "Shortcut Already in Use",
+            isPresented: Binding(
+                get: { shortcutConflict != nil },
+                set: { if !$0 { shortcutConflict = nil } }
+            ),
+            presenting: shortcutConflict
+        ) { conflict in
+            Button("Cancel", role: .cancel) {}
+            Button("Move Shortcut") {
+                viewModel.moveShortcut(conflict)
+                shortcutConflict = nil
+            }
+        } message: { conflict in
+            Text(
+                "\(conflict.displayShortcut) is currently assigned to \(conflict.sourceName). "
+                    + "Move it to \(conflict.targetName)? The shortcut will be removed from \(conflict.sourceName)."
+            )
         }
     }
 
@@ -98,10 +118,6 @@ struct SettingsView: View {
                     subtitle: "Switch to an app instantly. Press the same shortcut again to hide it."
                 )
 
-                if let validationMessage = viewModel.validationMessage {
-                    validationBanner(validationMessage)
-                }
-
                 if viewModel.configuration.shortcuts.isEmpty {
                     emptyShortcutsState
                 } else if viewModel.filteredShortcuts.isEmpty {
@@ -146,7 +162,14 @@ struct SettingsView: View {
                     if let binding = viewModel.binding(forShortcutID: shortcut.id) {
                         ShortcutRow(
                             shortcut: binding,
-                            issue: viewModel.registrationIssues[shortcut.id]
+                            issue: viewModel.registrationIssues[shortcut.id],
+                            onShortcutChange: { key, modifiers in
+                                shortcutConflict = viewModel.assignShortcut(
+                                    to: shortcut.id,
+                                    key: key,
+                                    modifiers: modifiers
+                                )
+                            }
                         ) {
                             viewModel.removeShortcut(id: shortcut.id)
                         }
@@ -257,14 +280,6 @@ struct SettingsView: View {
                         symbol: "list.bullet.rectangle.fill",
                         color: .purple,
                         isOn: $viewModel.configuration.settings.showShortcutsInMenu
-                    )
-                    Divider().padding(.leading, 54)
-                    SettingsToggleRow(
-                        title: "Keyboard Maestro warning",
-                        subtitle: "Warn when both tools may respond to the same shortcut.",
-                        symbol: "exclamationmark.triangle.fill",
-                        color: .orange,
-                        isOn: $viewModel.configuration.settings.showKeyboardMaestroWarning
                     )
                 }
 
@@ -418,22 +433,6 @@ struct SettingsView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    private func validationBanner(_ message: String) -> some View {
-        HStack(spacing: 10) {
-            Image(systemName: "exclamationmark.triangle.fill")
-                .foregroundStyle(.orange)
-            Text(message)
-                .font(.callout)
-                .foregroundStyle(.primary)
-            Spacer()
-        }
-        .padding(12)
-        .background(Color.orange.opacity(0.1), in: containerShape)
-        .overlay {
-            containerShape.strokeBorder(Color.orange.opacity(0.25), lineWidth: 1)
-        }
-    }
-
     @ViewBuilder
     private var saveBar: some View {
         // Only take up space when there are unsaved changes or a message to
@@ -451,6 +450,11 @@ struct SettingsView: View {
                     .foregroundStyle(viewModel.feedbackIsError ? .red : .secondary)
                     .lineLimit(1)
                     .transition(.opacity)
+                } else if let validationMessage = viewModel.validationMessage {
+                    Label(validationMessage, systemImage: "exclamationmark.triangle.fill")
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                        .lineLimit(1)
                 }
                 Spacer()
                 Button("Revert", action: viewModel.revert)
@@ -497,6 +501,7 @@ struct SettingsView: View {
 private struct ShortcutRow: View {
     @Binding var shortcut: ShortcutDefinition
     var issue: String?
+    let onShortcutChange: (String, [ShortcutModifier]) -> Void
     let onRemove: () -> Void
 
     @State private var isHovering = false
@@ -528,7 +533,11 @@ private struct ShortcutRow: View {
                     .accessibilityLabel("Shortcut registration problem")
             }
 
-            ShortcutRecorder(key: $shortcut.key, modifiers: $shortcut.modifiers)
+            ShortcutRecorder(
+                key: $shortcut.key,
+                modifiers: $shortcut.modifiers,
+                onShortcutChange: onShortcutChange
+            )
                 .frame(width: 132, height: 26)
 
             Toggle("", isOn: $shortcut.enabled)

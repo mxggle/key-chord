@@ -4,7 +4,7 @@
 
 # KeyChord
 
-[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](packaging/Info.plist)
+[![Version](https://img.shields.io/badge/version-1.1.1-blue.svg)](packaging/Info.plist)
 [![macOS](https://img.shields.io/badge/macOS-14.0%2B-apple.svg)](Package.swift)
 [![Swift](https://img.shields.io/badge/Swift-6.2-orange.svg)](Package.swift)
 
@@ -154,7 +154,7 @@ KeyChord includes utility flags for automation, diagnostics, and testing:
 ```bash
 # Check version
 KeyChord --version
-# Output: KeyChord v1.1.0 (build 2)
+# Output: KeyChord v1.1.1 (build 3)
 
 # Test shortcut registration for system conflicts
 KeyChord --probe-hotkeys
@@ -215,7 +215,13 @@ swift run KeyChord --self-test
 
 ## 📄 Versioning
 
-Current Version: **`1.1.0`** (Build `2`)
+Current Version: **`1.1.1`** (Build `3`)
+
+Changes in **v1.1.1**:
+- Added an immediate conflict dialog when assigning a shortcut already used by another app.
+- Added one-click shortcut reassignment that disables the previous owner and enables the new one.
+- Kept validation errors visible in the fixed save bar while scrolling the application list.
+- Simplified Keyboard Maestro conflict detection by making its warning automatic.
 
 Changes in **v1.1.0**:
 - Added native SwiftUI settings window with shortcut recorder.

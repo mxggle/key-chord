@@ -55,6 +55,31 @@ final class SettingsViewModel: ObservableObject {
         }
     }
 
+    struct ShortcutConflict: Identifiable, Equatable {
+        let sourceID: String
+        let sourceName: String
+        let targetID: String
+        let targetName: String
+        let key: String
+        let modifiers: [ShortcutModifier]
+
+        var id: String {
+            "\(sourceID):\(targetID):\(key):\(modifiers.map(\.rawValue).joined(separator: ","))"
+        }
+
+        var displayShortcut: String {
+            ShortcutDefinition(
+                id: "preview",
+                name: "Preview",
+                bundleIdentifier: "com.example.preview",
+                key: key,
+                modifiers: modifiers,
+                enabled: false,
+                launchIfNeeded: false
+            ).displayShortcut
+        }
+    }
+
     func binding(forShortcutID id: String) -> Binding<ShortcutDefinition>? {
         guard let index = configuration.shortcuts.firstIndex(where: { $0.id == id }) else {
             return nil
@@ -62,6 +87,75 @@ final class SettingsViewModel: ObservableObject {
         return Binding(
             get: { self.configuration.shortcuts[index] },
             set: { self.configuration.shortcuts[index] = $0 }
+        )
+    }
+
+    /// Applies an available shortcut immediately, or returns a conflict that
+    /// the view can present before moving the shortcut away from another app.
+    func assignShortcut(
+        to targetID: String,
+        key: String,
+        modifiers: [ShortcutModifier]
+    ) -> ShortcutConflict? {
+        guard let targetIndex = configuration.shortcuts.firstIndex(where: {
+            $0.id == targetID
+        }) else {
+            return nil
+        }
+
+        if key.isEmpty || modifiers.isEmpty {
+            configuration.shortcuts[targetIndex].key = ""
+            configuration.shortcuts[targetIndex].modifiers = []
+            configuration.shortcuts[targetIndex].enabled = false
+            return nil
+        }
+
+        if let source = configuration.shortcutUsing(
+            key: key,
+            modifiers: modifiers,
+            excludingID: targetID
+        ) {
+            return ShortcutConflict(
+                sourceID: source.id,
+                sourceName: source.name,
+                targetID: targetID,
+                targetName: configuration.shortcuts[targetIndex].name,
+                key: key,
+                modifiers: modifiers
+            )
+        }
+
+        configuration.shortcuts[targetIndex].key = key
+        configuration.shortcuts[targetIndex].modifiers = modifiers
+        return nil
+    }
+
+    func moveShortcut(_ conflict: ShortcutConflict) {
+        guard let sourceIndex = configuration.shortcuts.firstIndex(where: {
+            $0.id == conflict.sourceID
+        }),
+        let targetIndex = configuration.shortcuts.firstIndex(where: {
+            $0.id == conflict.targetID
+        }),
+        configuration.shortcuts[sourceIndex].usesHotKey(
+            key: conflict.key,
+            modifiers: conflict.modifiers
+        ) else {
+            setFeedback(
+                "The shortcut changed before it could be moved. Please record it again.",
+                isError: true
+            )
+            return
+        }
+
+        configuration.shortcuts[sourceIndex].key = ""
+        configuration.shortcuts[sourceIndex].modifiers = []
+        configuration.shortcuts[sourceIndex].enabled = false
+        configuration.shortcuts[targetIndex].key = conflict.key
+        configuration.shortcuts[targetIndex].modifiers = conflict.modifiers
+        configuration.shortcuts[targetIndex].enabled = true
+        setFeedback(
+            "\(conflict.displayShortcut) moved from \(conflict.sourceName) to \(conflict.targetName). Save to apply."
         )
     }
 
